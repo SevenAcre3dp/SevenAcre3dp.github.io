@@ -6,30 +6,34 @@
   <script>
     const proxyUrl = 'https://rapid-limit-235d.brobbins1995.workers.dev/';
     const targetUrl = 'https://sevenacredesign3dp.etsy.com';
-    
-    // Fetch the remote page's HTML via the proxy.
-    fetch(proxyUrl + encodeURIComponent(targetUrl))
-      .then(response => {
+
+    async function fetchRemoteHead() {
+      try {
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
         if (!response.ok) {
           throw new Error('Network response was not ok: ' + response.status);
         }
-        return response.text();
-      })
-      .then(html => {
+        const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        // Update document title with the remote page's title.
+        // Update document title using remote title
         document.title = doc.title;
-        // Append remote head elements into the current document head.
+        // Append remote head elements into our document head
         doc.head.querySelectorAll('*').forEach(node => {
           document.head.appendChild(node.cloneNode(true));
         });
-      })
-      .catch(err => console.error('Could not fetch remote head:', err));
+      } catch (err) {
+        console.error('Could not fetch remote head:', err);
+        // Display error on page for debugging purposes
+        document.body.innerHTML = `<p style="color: red; text-align: center; margin-top: 20px;">
+          Error fetching remote head: ${err.message}
+        </p>`;
+      }
+    }
+    fetchRemoteHead();
   </script>
 </head>
 <body style="margin: 0; padding: 0; height: 100vh;">
-  <!-- The iframe loads the remote page via the proxy -->
   <iframe id="embeddedPage"
           src="https://rapid-limit-235d.brobbins1995.workers.dev/?url=https%3A%2F%2Fsevenacredesign3dp.etsy.com"
           title="Embedded Etsy Page"
