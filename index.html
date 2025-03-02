@@ -4,29 +4,35 @@
   <meta charset="UTF-8">
   <title>Embedded Etsy Page</title>
   <script>
-    // Using ThingProxy to bypass CORS and X-Frame-Options restrictions.
-    const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
+    // Using AllOrigins to proxy the request so that CORS and X-Frame-Options restrictions are bypassed.
+    const proxyUrl = 'https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=';
     const targetUrl = 'https://sevenacredesign3dp.etsy.com';
-
-    fetch(proxyUrl + targetUrl)
-      .then(response => response.text())
-      .then(html => {
+    
+    // Fetch the remote page's HTML via the proxy.
+    fetch(proxyUrl + encodeURIComponent(targetUrl))
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        return response.json();
+      })
+      .then(data => {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        // Update the document title using the remote page's title.
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        // Update the document title with the remote page's title.
         document.title = doc.title;
-        // Append remote head elements to the current document head.
+        // Append remote head elements into the current document head.
         doc.head.querySelectorAll('*').forEach(node => {
           document.head.appendChild(node.cloneNode(true));
         });
       })
-      .catch(err => console.error('Could not fetch remote head:', err));
+      .catch(error => console.error('Could not fetch remote head:', error));
   </script>
 </head>
 <body style="margin: 0; padding: 0; height: 100vh;">
-  <!-- The iframe is loaded via the proxy to ensure it is requested over HTTPS -->
+  <!-- Load the remote page via the proxy in an iframe -->
   <iframe id="embeddedPage"
-          src="https://thingproxy.freeboard.io/fetch/https://sevenacredesign3dp.etsy.com"
+          src="https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=https%3A%2F%2Fsevenacredesign3dp.etsy.com"
           title="Embedded Etsy Page"
           style="width: 100%; height: 100%; border: none;">
   </iframe>
