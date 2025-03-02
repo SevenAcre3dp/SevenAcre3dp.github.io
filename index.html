@@ -2,13 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- 
+    IMPORTANT: To fix CORS and iframe restrictions, all requests are routed through a proxy.
+    Replace 'https://your-proxy.com/?url=' with your proxy endpoint.
+  -->
+  <title>Embedded Etsy Page</title>
   <script>
-    fetch('https://sevenacredesign3dp.etsy.com')
+    const proxyUrl = 'https://your-proxy.com/?url=';
+    const targetUrl = 'https://sevenacredesign3dp.etsy.com';
+
+    // Attempt to fetch the remote head via the proxy.
+    fetch(proxyUrl + encodeURIComponent(targetUrl))
       .then(response => response.text())
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        // Update the document title from the fetched head.
         document.title = doc.title;
+        // Append all head elements from the remote page.
         doc.head.querySelectorAll('*').forEach(node => {
           document.head.appendChild(node.cloneNode(true));
         });
@@ -17,15 +28,17 @@
   </script>
 </head>
 <body style="margin: 0; padding: 0; height: 100vh;">
+  <!-- The iframe now loads the target URL via the proxy to bypass X-Frame-Options -->
   <iframe id="embeddedPage"
-          src="https://sevenacredesign3dp.etsy.com"
+          src="https://your-proxy.com/?url=https%3A%2F%2Fsevenacredesign3dp.etsy.com"
           title="Embedded Etsy Page"
           style="width: 100%; height: 100%; border: none;">
   </iframe>
   
   <script>
+    // Optional: Listen for postMessages from the embedded page to update the browser URL.
     window.addEventListener('message', event => {
-      if (event.origin === "https://sevenacredesign3dp.etsy.com") {
+      if (event.origin === targetUrl) {
         const newPath = event.data;
         if (typeof newPath === 'string') {
           history.pushState({}, '', newPath);
