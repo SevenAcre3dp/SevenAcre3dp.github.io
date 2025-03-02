@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    // Attempt to fetch the remote page's HTML so we can extract the head content.
+    // Note: This may fail due to CORS or security policies set by the remote server.
+    fetch('https://sevenacredesign3dp.etsy.com')
+      .then(response => response.text())
+      .then(html => {
+        // Parse the fetched HTML using DOMParser.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Set the current document title to the remote page's title.
+        document.title = doc.title;
+
+        // Append all elements from the remote head to the current document head.
+        // (Be cautious: duplicating meta tags or scripts may lead to conflicts.)
+        doc.head.querySelectorAll('*').forEach(node => {
+          // Clone the node so that it's inserted into our document.
+          const cloned = node.cloneNode(true);
+          document.head.appendChild(cloned);
+        });
+      })
+      .catch(err => console.error('Could not fetch remote head:', err));
+  </script>
+</head>
+<body style="margin: 0; padding: 0; height: 100vh;">
+  <!-- The iframe displays the external site. -->
+  <iframe id="embeddedPage" 
+          src="https://sevenacredesign3dp.etsy.com" 
+          title="Embedded Etsy Page" 
+          style="width: 100%; height: 100%; border: none;">
+  </iframe>
+  
+  <script>
+    // OPTIONAL: Attempt to update the browser's URL as the user navigates within the iframe.
+    // This requires the remote site to cooperate (e.g. via postMessage) which is unlikely.
+    window.addEventListener('message', event => {
+      if (event.origin === "https://sevenacredesign3dp.etsy.com") {
+        // Here we expect the remote page to send a message containing the new URL path.
+        const newPath = event.data;
+        if (typeof newPath === 'string') {
+          history.pushState({}, '', newPath);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
