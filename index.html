@@ -4,35 +4,35 @@
   <meta charset="UTF-8">
   <title>Embedded Etsy Page</title>
   <script>
-    // Using AllOrigins to proxy the request so that CORS and X-Frame-Options restrictions are bypassed.
-    const proxyUrl = 'https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=';
+    // Using CORS Anywhere to bypass CORS restrictions.
+    // IMPORTANT: Visit https://cors-anywhere.herokuapp.com/corsdemo first to activate the proxy.
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const targetUrl = 'https://sevenacredesign3dp.etsy.com';
-    
-    // Fetch the remote page's HTML via the proxy.
-    fetch(proxyUrl + encodeURIComponent(targetUrl))
+
+    fetch(proxyUrl + targetUrl)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok.');
         }
-        return response.json();
+        return response.text();
       })
-      .then(data => {
+      .then(html => {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(data.contents, 'text/html');
-        // Update the document title with the remote page's title.
+        const doc = parser.parseFromString(html, 'text/html');
+        // Update the document title using the remote page's title.
         document.title = doc.title;
-        // Append remote head elements into the current document head.
+        // Append each head element from the remote page to the current head.
         doc.head.querySelectorAll('*').forEach(node => {
           document.head.appendChild(node.cloneNode(true));
         });
       })
-      .catch(error => console.error('Could not fetch remote head:', error));
+      .catch(err => console.error('Could not fetch remote head:', err));
   </script>
 </head>
 <body style="margin: 0; padding: 0; height: 100vh;">
-  <!-- Load the remote page via the proxy in an iframe -->
+  <!-- The iframe loads the remote page via the proxy -->
   <iframe id="embeddedPage"
-          src="https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=https%3A%2F%2Fsevenacredesign3dp.etsy.com"
+          src="https://cors-anywhere.herokuapp.com/https://sevenacredesign3dp.etsy.com"
           title="Embedded Etsy Page"
           style="width: 100%; height: 100%; border: none;">
   </iframe>
