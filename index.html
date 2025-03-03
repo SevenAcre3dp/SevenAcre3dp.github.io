@@ -12,28 +12,32 @@
 
   </script>
   <script>
-  // Function to remove the specific link
-  function removeTutorialLink() {
-    const links = document.querySelectorAll('a.tutorial_link[href="https://www.sociablekit.com/tutorials/embed-html"]');
-    links.forEach(link => {
-      if (link.textContent.trim() === "Embed Etsy Shop on your HTML website") {
-        link.remove();
-      }
-    });
+  // Function to remove any element with class "tutorial_link"
+  function removeTutorialLinks() {
+    try {
+      const links = document.querySelectorAll('.tutorial_link');
+      links.forEach(link => {
+        // Remove the element if it exists
+        if (link && link.parentElement) {
+          link.parentElement.removeChild(link);
+        }
+      });
+    } catch (error) {
+      console.error("Error removing tutorial links:", error);
+    }
   }
 
-  // Run on initial load
-  removeTutorialLink();
+  // Run once on page load
+  removeTutorialLinks();
 
-  // Set up a MutationObserver to monitor changes in the DOM
-  const observer = new MutationObserver(mutations => {
-    // Call the removal function on any DOM changes
-    removeTutorialLink();
+  // Use a MutationObserver to continuously check for new elements with the class "tutorial_link"
+  const observer = new MutationObserver(() => {
+    removeTutorialLinks();
   });
 
-  // Start observing the document body for changes in child elements and their descendants.
   observer.observe(document.body, { childList: true, subtree: true });
 </script>
+
 
 </head>
 <body>
