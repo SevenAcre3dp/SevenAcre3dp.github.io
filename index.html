@@ -2,40 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Embedded Etsy Page</title>
+  <title>Redirecting...</title>
   <script>
-    // Your Cloudflare Worker URL on your new domain.
-    const proxyUrl = 'https://sad3dp.ed-ab3.workers.dev/';
-    // The target URL to be embedded.
-    const targetUrl = 'https://sevenacredesign3dp.etsy.com';
-    
-    // Fetch the remote page's head through the Worker.
-    fetch(proxyUrl + '?url=' + encodeURIComponent(targetUrl))
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network error: ' + response.status);
-        }
-        return response.text();
-      })
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        // Update the document title with the target page's title.
-        document.title = doc.title;
-        // Optionally, append head elements from the target page.
-        doc.head.querySelectorAll('*').forEach(node => {
-          document.head.appendChild(node.cloneNode(true));
-        });
-      })
-      .catch(err => console.error('Failed to fetch remote head:', err));
+    // Insert your tracking pixel code or advertising pixel code here.
+    // For example, if you're using Facebook Pixel:
+    // fbq('track', 'PageView');
+
+    console.log("Tracking pixel fired");
+
+    // After a short delay (e.g., 2 seconds), redirect the user to your Etsy store.
+    setTimeout(function() {
+      window.location.href = "https://sevenacredesign3dp.etsy.com";
+    }, 2000);
   </script>
 </head>
-<body style="margin: 0; padding: 0; height: 100vh;">
-  <!-- The iframe loads the target page through your Worker -->
-  <iframe id="embeddedPage"
-          src="https://sad3dp.ed-ab3.workers.dev/?url=https%3A%2F%2Fsevenacredesign3dp.etsy.com"
-          title="Embedded Etsy Page"
-          style="width: 100%; height: 100%; border: none;">
-  </iframe>
+<body>
+  <p>Loading... Please wait while we redirect you to our store.</p>
+  <!-- Fallback for users with JavaScript disabled -->
+  <noscript>
+    <meta http-equiv="refresh" content="2;url=https://sevenacredesign3dp.etsy.com">
+    <p>If you are not redirected automatically, <a href="https://sevenacredesign3dp.etsy.com">click here</a>.</p>
+  </noscript>
 </body>
 </html>
