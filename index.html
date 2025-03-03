@@ -12,31 +12,23 @@
 
   </script>
   <script>
-  // Function to remove any element with class "tutorial_link"
-  function removeTutorialLinks() {
-    try {
-      const links = document.querySelectorAll('.tutorial_link');
-      links.forEach(link => {
-        // Remove the element if it exists
-        if (link && link.parentElement) {
-          link.parentElement.removeChild(link);
-        }
-      });
-    } catch (error) {
-      console.error("Error removing tutorial links:", error);
+  async function continuouslyRemoveTutorialLinks() {
+    while (true) {
+      try {
+        const links = document.querySelectorAll('.tutorial_link');
+        links.forEach(link => link.remove());
+      } catch (error) {
+        console.error("Error removing tutorial links:", error);
+      }
+      // Wait for 500ms before checking again
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 
-  // Run once on page load
-  removeTutorialLinks();
-
-  // Use a MutationObserver to continuously check for new elements with the class "tutorial_link"
-  const observer = new MutationObserver(() => {
-    removeTutorialLinks();
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
+  // Start the loop
+  continuouslyRemoveTutorialLinks();
 </script>
+
 
 
 </head>
