@@ -11,6 +11,30 @@
    
 
   </script>
+  <script>
+  // Function to remove the specific link
+  function removeTutorialLink() {
+    const links = document.querySelectorAll('a.tutorial_link[href="https://www.sociablekit.com/tutorials/embed-html"]');
+    links.forEach(link => {
+      if (link.textContent.trim() === "Embed Etsy Shop on your HTML website") {
+        link.remove();
+      }
+    });
+  }
+
+  // Run on initial load
+  removeTutorialLink();
+
+  // Set up a MutationObserver to monitor changes in the DOM
+  const observer = new MutationObserver(mutations => {
+    // Call the removal function on any DOM changes
+    removeTutorialLink();
+  });
+
+  // Start observing the document body for changes in child elements and their descendants.
+  observer.observe(document.body, { childList: true, subtree: true });
+</script>
+
 </head>
 <body>
    <div class='sk-ww-etsy-shop' data-embed-id='25529908'></div><script src='https://widgets.sociablekit.com/etsy-shop/widget.js' defer></script>
